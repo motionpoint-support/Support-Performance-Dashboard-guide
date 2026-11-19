@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reading the Support Performance Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&amp;family=Lexend:wght@400;500;600;700&amp;family=Lato:wght@400;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Lato',system-ui,sans-serif;background:#0E1B2E;color:#0B2545}
+a{color:#1466F0}a:hover{color:#0B4FC0}
+.stage *{box-sizing:border-box}
+.mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}
+.disp{font-family:'Lexend','Lato',sans-serif}
+.paused,.paused *{animation-play-state:paused !important}
+.sh{position:absolute;left:40px;top:-4px}
+.h2{font-family:'Lexend','Lato',sans-serif;font-size:30px;font-weight:700;color:#0B2545}
+.h2s{font-size:18px;color:#3B4F6B}
+.sc{position:absolute;top:66px;height:86px;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.sn{font-family:'Lexend','Lato',sans-serif;width:30px;height:30px;border-radius:15px;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.st{font-size:16px;font-weight:900;color:#0B2545;line-height:1.2}
+.tg{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;color:#FFFFFF;font-size:11px;font-weight:900;letter-spacing:.03em;white-space:nowrap}
+.mk{position:absolute;right:-9px;bottom:-11px}
+.panel{position:absolute;left:40px;top:170px;width:1200px;height:460px;border-radius:22px;background:#FFFFFF;box-shadow:0 14px 36px rgba(11,37,69,.10);overflow:hidden}
+.win{position:absolute;left:0;top:0;width:1200px;height:460px;background:#FFFFFF}
+.ill{position:absolute;left:26px;top:26px;width:470px;height:408px;border-radius:18px;overflow:hidden}
+.tc{position:absolute;left:530px;top:30px;width:640px;display:flex;flex-direction:column;gap:12px}
+.eb{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.tt{font-family:'Lexend','Lato',sans-serif;font-size:28px;font-weight:700;color:#0B2545;line-height:1.2;margin-bottom:2px}
+.bl{display:flex;gap:12px;align-items:flex-start}
+.bn{width:26px;height:26px;border-radius:13px;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.bt{font-size:19px;line-height:1.4;color:#0B2545;font-weight:700}
+.lp{align-self:flex-start;margin-top:10px;height:46px;padding:0 20px 0 10px;border-radius:23px;display:inline-flex;align-items:center;gap:10px;font-size:17px;font-weight:900}
+.ex{margin-top:6px;border-radius:14px;background:#FFF7F0;border:2px dashed #C2410C;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.exh{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#9A3412}
+.ext{font-size:17px;line-height:1.45;font-weight:700;color:#0B2545}
+.wc{position:absolute;background:#FFFFFF;border-radius:14px;box-shadow:0 10px 24px rgba(11,37,69,.14);overflow:hidden}
+.bar{height:30px;background:#E9EEF5;display:flex;align-items:center;gap:5px;padding:0 10px}
+.dot{width:8px;height:8px;border-radius:4px}
+.url{margin-left:6px;flex-grow:1;height:18px;border-radius:9px;background:#FFFFFF;font-size:11px;color:#3B4F6B;padding:0 8px;line-height:18px;white-space:nowrap;overflow:hidden}
+.ln{height:8px;border-radius:4px;background:#E3E9F2}
+.lab{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#5A6B84}
+.fld{height:32px;border-radius:8px;border:2px solid #C9D3E1;display:flex;align-items:center;padding:0 10px;font-size:13px;color:#0B2545}
+.av{position:absolute}
+@keyframes panX{0%,15%{transform:translateX(0)}85%,100%{transform:translateX(-1264px)}}
+.shot{position:absolute;left:26px;top:26px;width:700px;height:408px;border-radius:14px;background:#EEF2F8;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tc2{position:absolute;left:752px;top:30px;width:424px;display:flex;flex-direction:column;gap:12px}
+.call{margin-top:6px;border-radius:14px;background:#1466F0;color:#FFFFFF;padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.rz{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:16px;background:#FFF7F0;border:2px solid #C2410C;color:#7C2D12;font-size:14px;font-weight:900;white-space:nowrap}
+.ch{height:40px;padding:0 16px;border-radius:20px;background:#FFFFFF;display:inline-flex;align-items:center;font-size:15px;font-weight:900}
+.row{height:44px;border-radius:12px;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:16px;font-weight:700;color:#0B2545;box-shadow:0 4px 10px rgba(11,37,69,.06)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fromL{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes win{0%{opacity:0;transform:translateY(14px)}9%{opacity:1;transform:none}90%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-10px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(20,102,240,.45),0 18px 40px rgba(11,37,69,.14)}50%{box-shadow:0 0 0 16px rgba(20,102,240,0),0 18px 40px rgba(11,37,69,.14)}}
+@keyframes warnPulse{0%,100%{box-shadow:0 0 0 0 rgba(234,88,12,.55)}50%{box-shadow:0 0 0 12px rgba(234,88,12,0)}}
+@keyframes press{0%,100%{transform:scale(1)}50%{transform:scale(.94)}}
+@keyframes typeIn{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.7) rotate(-7deg)}60%{opacity:1;transform:scale(.95) rotate(-7deg)}100%{opacity:1;transform:scale(1) rotate(-7deg)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes march{to{stroke-dashoffset:-72}}
+@keyframes arc{from{stroke-dashoffset:302}to{stroke-dashoffset:0}}
+@keyframes pass{from{transform:translateX(0)}to{transform:translateX(196px)}}
+@keyframes toL{from{opacity:1;transform:none}to{opacity:0;transform:translate(-320px,250px) scale(.35)}}
+@keyframes toR{from{opacity:1;transform:none}to{opacity:0;transform:translate(320px,250px) scale(.35)}}
+@keyframes hiO{0%{background:#FFFFFF}100%{background:#FFF1E6;box-shadow:0 0 0 3px #C2410C}}
+@keyframes toGrey{to{background:#94A3B8}}
+@keyframes litRing{0%{box-shadow:0 0 0 0 currentColor;transform:none}8%,92%{box-shadow:0 0 0 4px currentColor,0 16px 30px rgba(11,37,69,.18);transform:translateY(-6px)}100%{box-shadow:0 0 0 0 transparent;transform:none}}
+.ctl{height:44px;min-width:44px;padding:0 14px;border-radius:10px;border:1px solid #2A3E5C;background:#15263F;color:#E6EEF8;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+.ctl:hover{background:#1D3354}
+.ctl.main{background:#1466F0;border-color:#1466F0;color:#fff}
+.ctl.main:hover{background:#0B55D0}
+.chip{height:32px;padding:0 7px;letter-spacing:-.01em;border-radius:16px;border:1px solid #2A3E5C;background:transparent;color:#A9B8CC;font-family:'Lato',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.chip:hover{color:#fff;border-color:#4A6488}
+.chip.done{color:#D5E0EE;border-color:#34507A;background:#16304F}
+.chip.on{color:#0B2545;background:#8FD16F;border-color:#8FD16F}
+</style>
+<style>
+html,body{height:100%}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden}
+#fit{width:1280px;height:870px;transform-origin:center center;flex-shrink:0}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div id="fit">
+<div style="width: 1280px; height: 870px; background: #0E1B2E; display: flex; flex-direction: column; overflow: hidden;">
+
+<!-- hidden symbol library -->
+<svg width="0" height="0" style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+<defs>
+<symbol id="dc-customer" viewBox="0 0 200 200">
+<path d="M58 88 C52 38 148 38 142 88 L146 124 C132 132 124 116 122 104 L78 104 C76 116 68 132 54 124 Z" fill="#3B2A26"></path>
+<path d="M40 200 C40 150 66 128 100 128 C134 128 160 150 160 200 Z" fill="#23A094"></path>
+<path d="M84 129 L100 152 L116 129 Z" fill="#E6F6F3"></path>
+<rect x="89" y="104" width="22" height="28" rx="8" fill="#E2A77F"></rect>
+<ellipse cx="100" cy="82" rx="32" ry="36" fill="#F1C39E"></ellipse>
+<path d="M66 76 C68 42 132 40 136 78 C118 64 94 60 70 80 Z" fill="#3B2A26"></path>
+<circle cx="88" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="112" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="79" cy="98" r="5.5" fill="#F29A86" opacity=".45"></circle>
+<circle cx="121" cy="98" r="5.5" fill="#F29A86" opacity=".45"></circle>
+<path d="M90 102 Q100 109 110 102" stroke="#A0523D" stroke-width="3" fill="none" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-agent" viewBox="0 0 200 200">
+<path d="M40 200 C40 150 66 128 100 128 C134 128 160 150 160 200 Z" fill="#1466F0"></path>
+<path d="M84 129 L100 150 L116 129 Z" fill="#FFFFFF"></path>
+<rect x="89" y="104" width="22" height="28" rx="8" fill="#B97A55"></rect>
+<ellipse cx="68" cy="88" rx="7" ry="10" fill="#C98B63"></ellipse>
+<ellipse cx="132" cy="88" rx="7" ry="10" fill="#C98B63"></ellipse>
+<ellipse cx="100" cy="82" rx="32" ry="36" fill="#D39A72"></ellipse>
+<path d="M67 80 C62 42 138 40 133 80 C126 60 80 58 67 80 Z" fill="#1F1A17"></path>
+<circle cx="88" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="112" cy="87" r="3.8" fill="#1F2937"></circle>
+<path d="M89 101 Q100 109 111 101" stroke="#7A3B2A" stroke-width="3" fill="none" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-server" viewBox="0 0 120 150">
+<rect x="10" y="6" width="100" height="40" rx="8" fill="#243B5E"></rect>
+<rect x="10" y="54" width="100" height="40" rx="8" fill="#2E4A73"></rect>
+<rect x="10" y="102" width="100" height="40" rx="8" fill="#243B5E"></rect>
+<circle cx="28" cy="26" r="5" fill="#8FD16F"></circle><circle cx="28" cy="74" r="5" fill="#8FD16F"></circle><circle cx="28" cy="122" r="5" fill="#8FD16F"></circle>
+<rect x="46" y="22" width="50" height="8" rx="4" fill="#5B7BA6"></rect><rect x="46" y="70" width="50" height="8" rx="4" fill="#5B7BA6"></rect><rect x="46" y="118" width="50" height="8" rx="4" fill="#5B7BA6"></rect>
+</symbol>
+<symbol id="dc-check" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="11" fill="#3E9B2F"></circle>
+<path d="M6.5 12.5 L10.3 16.2 L17.5 8.6" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-x" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="11" fill="#C2410C"></circle>
+<path d="M8 8l8 8M16 8l-8 8" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-warn" viewBox="0 0 24 24">
+<path d="M12 3 L22 20.5 H2 Z" fill="#F2A93B" stroke="#8A5200" stroke-width="1.4" stroke-linejoin="round"></path>
+<path d="M12 9.5 V14.5" stroke="#5A3500" stroke-width="2.2" stroke-linecap="round"></path>
+<circle cx="12" cy="17.4" r="1.3" fill="#5A3500"></circle>
+</symbol>
+<symbol id="dc-ticket" viewBox="0 0 24 24">
+<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path d="M9 5v14" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2 2.4"></path>
+</symbol>
+<symbol id="dc-clock" viewBox="0 0 24 24">
+<circle cx="12" cy="13" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle>
+<path d="M12 8.5V13l3 2M10 2.5h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-phone" viewBox="0 0 24 24">
+<path d="M5 3.5h3.5l2 5-2.5 1.6a11 11 0 0 0 5.4 5.4l1.6-2.5 5 2v3.5a2 2 0 0 1-2 2A17 17 0 0 1 3 5.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-cal" viewBox="0 0 24 24">
+<rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M16 3v4M8 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-mail" viewBox="0 0 24 24">
+<rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-lock" viewBox="0 0 24 24">
+<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.9"></path>
+<circle cx="12" cy="15.6" r="1.6" fill="currentColor"></circle>
+</symbol>
+<symbol id="dc-doc" viewBox="0 0 40 48">
+<path d="M4 4h22l10 10v30H4z" fill="#FFFFFF" stroke="#6D4AE0" stroke-width="2.4" stroke-linejoin="round"></path>
+<path d="M26 4v10h10" fill="none" stroke="#6D4AE0" stroke-width="2.4" stroke-linejoin="round"></path>
+<path d="M11 24h18M11 31h18M11 38h12" stroke="#B9A8F2" stroke-width="3" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-img" viewBox="0 0 24 24">
+<rect x="3" y="4" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<circle cx="9" cy="9.5" r="1.8" fill="currentColor"></circle>
+<path d="M3.5 17l5-5 4 4 3-3 5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-play" viewBox="0 0 24 24">
+<path d="M7 4.5v15l12-7.5z" fill="currentColor"></path>
+</symbol>
+<symbol id="dc-edit" viewBox="0 0 24 24">
+<path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+<path d="M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.9"></path>
+</symbol>
+</defs>
+</svg>
+
+<!-- ===================== STAGE ===================== -->
+<div id="stage" class="stage" style="position: relative; width: 1280px; height: 720px; overflow: hidden; background: #F3F6FB; flex-shrink: 0;">
+
+<div style="position: absolute; left: -160px; top: -200px; width: 560px; height: 560px; border-radius: 50%; background: #E6EEFA;"></div>
+<div style="position: absolute; right: -120px; bottom: -220px; width: 520px; height: 520px; border-radius: 50%; background: #EAF5E4;"></div>
+
+<div style="position: absolute; left: 28px; top: 14px; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; color: #3B4F6B; letter-spacing: .02em;">
+<span id="steps" style="display: contents;"></span>
+<span class="disp" style="font-weight: 700; color: #0B2545; font-size: 16px;">MotionPoint Support</span>
+<span style="width: 4px; height: 4px; border-radius: 2px; background: #94A3B8;"></span>
+<span>New Agent Training &middot; Performance Dashboard</span>
+</div>
+
+<!-- ============ SCENE 0 · INTRO ============ -->
+<template id="scene-0">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div style="position: absolute; left: 0; top: 40px; width: 1280px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;"><div style="font-size: 16px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #3E8A2A; animation: up .8s .4s both;">Customer Support &middot; New Agent Training</div><h1 class="disp" style="margin: 0; font-size: 54px; line-height: 1.05; font-weight: 700; color: #0B2545; animation: up .9s .9s both;">Reading the Support Performance Dashboard</h1><p style="margin: 0; font-size: 23px; color: #3B4F6B; max-width: 1040px; animation: up .9s 1.6s both;">What every number means, and how to hit your goals.</p></div>
+<div style="position: absolute; left: 40px; top: 250px; width: 380px; height: 180px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 5s both;"><span class="eb" style="color: #2F7A22;">Utilization</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.4;">90% or more of your available hours, logged.</span></div>
+<div style="position: absolute; left: 450px; top: 250px; width: 380px; height: 180px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 9s both;"><span class="eb" style="color: #1466F0;">Time to Start</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.4;">Standard 90%+. Express and Critical 100%.</span></div>
+<div style="position: absolute; left: 860px; top: 250px; width: 380px; height: 180px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 13s both;"><span class="eb" style="color: #C2410C;">Cases</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.4;">About 200&ndash;250 cases touched a month, at full workload.</span></div>
+<div style="position: absolute; left: 160px; top: 466px; width: 960px; height: 100px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 18s both;"><svg width="40" height="40" style="flex-shrink: 0; color: #FFD27A;"><use href="#dc-check"></use></svg><span style="font-size: 21px; font-weight: 900; line-height: 1.4;">The names and numbers in this video are examples. Your real numbers come from Salesforce.</span></div>
+</div>
+</template>
+
+<!-- ============ SCENE 1 · URGENT? ============ -->
+<template id="scene-1">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 1: Find your way</div><div class="h2s">Pick a period, pick your name, know your goals.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 24s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">Period &middot; Agent</span></div><div class="st">Filters</div><svg class="mk" width="28" height="28" style="animation: pop .5s 27.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.6s both, litRing 24s 28s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">2</span><span class="tg" style="background: #2F7A22;">KPIs</span></div><div class="st">Your goals</div><svg class="mk" width="28" height="28" style="animation: pop .5s 51.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">First, the basics.</div>
+<div class="win" style="animation: win 24s 4s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 660px; height: 240px; background: #FFFFFF; overflow: hidden; animation: zoomIn .6s 4.5s both;"><div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;"><b class="disp" style="font-size: 20px; color: #0B2545;">Support Performance Dashboard</b><span style="font-size: 14.5px; color: #0B2545; line-height: 1.5; padding: 10px 12px; border-radius: 10px; background: #F3F6FB; animation: fadeIn .5s 6s both;">Team utilization is <b>93%</b> for <b>Last month</b>, with <b>5</b> of <b>6</b> agents at or above the <b>90%</b> target.</span><div style="display: flex; gap: 12px; flex-wrap: wrap;"><span style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; color: #3B4F6B;">Period<span style="padding: 7px 12px; border: 1px solid #CBD2DC; border-radius: 8px; font-size: 14px; color: #0B2545; box-shadow: 0 0 0 3px #F6A600; animation: pop .45s 9s both;">Last month &#9662;</span></span><span style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; color: #3B4F6B;">Agent<span style="padding: 7px 12px; border: 1px solid #CBD2DC; border-radius: 8px; font-size: 14px; color: #0B2545; box-shadow: 0 0 0 3px #F6A600; animation: pop .45s 12s both;">Alex R. &#9662;</span></span></div><span style="font-size: 12.5px; color: #3B4F6B;">Periods: Today, Yesterday, This or Last week, month, quarter or year, or a Custom range.</span></div></div><div style="position: absolute; right: 26px; top: 20px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 268px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 50px; font-size: 14.5px; animation: up .45s 14s both;"><span class="sn" style="background: #1466F0;">1</span><span>The top line sums up the team for the period you pick.</span></div><div class="row" style="height: 50px; font-size: 14.5px; animation: up .45s 16s both;"><span class="sn" style="background: #C2410C;">2</span><span>Pick the <b>Period</b>, then your name under <b>Agent</b>.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Find your way &middot; 1 of 2</div>
+<div class="tt" style="font-size: 26px;">Period and Agent</div>
+<div class="bl" style="animation: fromR .6s 6s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">The top line: the team at a glance.</span></div>
+<div class="bl" style="animation: fromR .6s 9s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">Period: the time you&rsquo;re looking at.</span></div>
+<div class="bl" style="animation: fromR .6s 12s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Agent: just your numbers.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 24s 28s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 660px; height: 196px; overflow: hidden; animation: zoomIn .6s 28.5s both;"><div style="display: flex; background: #0B2545; color: #FFF; font-size: 11px; font-weight: 900; letter-spacing: .04em;"><span style="flex: 2.2; padding: 8px 6px; text-align: left;">Your goal (KPI)</span><span style="flex: 1.3; padding: 8px 6px; text-align: right;">Target</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Measured</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 29.5s both;"><span style="flex: 2.2; padding: 9px 6px; text-align: left; font-weight: 700;">Utilization</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">90&ndash;100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">Quarterly</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; background: #F7F9FC; animation: up .35s 29.9s both;"><span style="flex: 2.2; padding: 9px 6px; text-align: left; font-weight: 700;">TTS, Standard cases</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">90&ndash;100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">Quarterly</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 30.3s both;"><span style="flex: 2.2; padding: 9px 6px; text-align: left; font-weight: 700;">TTS, Express and Critical</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">Quarterly</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; background: #F7F9FC; animation: up .35s 30.7s both;"><span style="flex: 2.2; padding: 9px 6px; text-align: left; font-weight: 700;">Cases touched (full workload)</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">~200&ndash;250 / month</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">Quarterly</span></div></div><div style="position: absolute; left: 20px; top: 226px; width: 660px; height: 152px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 34s both;"><span style="font-size: 15.5px; font-weight: 900; line-height: 1.5;">Your goals stay steady, and are measured every quarter. Formal measurement starts after your first 90 days, so use that time to build the habits.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Find your way &middot; 2 of 2</div>
+<div class="tt" style="font-size: 26px;">Your three goals</div>
+<div class="bl" style="animation: fromR .6s 29.5s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">1</span><span class="bt" style="font-size: 18px;">Utilization: 90% or more.</span></div>
+<div class="bl" style="animation: fromR .6s 30.3s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">TTS: 90%+ Standard, 100% Express and Critical.</span></div>
+<div class="bl" style="animation: fromR .6s 31.1s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">3</span><span class="bt" style="font-size: 18px;">Cases: about 200&ndash;250 a month.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 40s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Good news</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">First 90 days: learn, practice, build habits.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 2 · WHO ============ -->
+<template id="scene-2">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 2: Utilization</div><div class="h2s">Goal: 90% or more of your available hours, logged.</div></div>
+<div class="sc" style="left: 40px; width: 389.33px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.4s both, litRing 26s 4s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">1</span><span class="tg" style="background: #2F7A22;">Logged &divide; available</span></div><div class="st">The formula</div><svg class="mk" width="28" height="28" style="animation: pop .5s 29.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 445.33px; width: 389.33px; background: #FCE3CC; color: #C2410C; animation: up .6s 1.6s both, litRing 26s 30s both;"><div class="sr"><span class="sn" style="background: #C2410C;">2</span><span class="tg" style="background: #C2410C;">PTO</span></div><div class="st">What counts</div><svg class="mk" width="28" height="28" style="animation: pop .5s 55.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 850.67px; width: 389.33px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.8s both, litRing 26s 56s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">3</span><span class="tg" style="background: #2F7A22;">Colors</span></div><div class="st">The chart</div><svg class="mk" width="28" height="28" style="animation: pop .5s 81.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Your first number.</div>
+<div class="win" style="animation: win 26s 4s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 300px; height: 170px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 4.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Utilization</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #2F7A22;">92%</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">140 h logged of 152 h available &middot; target 90%</span></div><div class="wc" style="left: 340px; top: 14px; width: 340px; height: 170px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 6s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Today so far</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #1466F0;">3.5 h</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">Logged today. Not counted until tomorrow.</span></div><div style="position: absolute; right: 26px; top: 20px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 206px; width: 660px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;"><span style="padding: 10px 14px; border-radius: 12px; background: #DCE7F7; border: 2px solid #1466F0; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 9s both;">Hours logged in My Day</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 9.8s both;">&divide;</span><span style="padding: 10px 14px; border-radius: 12px; background: #FCE3CC; border: 2px solid #C2410C; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 10.6s both;">Available hours</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 11.4s both;">=</span><span style="padding: 10px 14px; border-radius: 12px; background: #E5F4DE; border: 2px solid #2F7A22; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 12.2s both;">Utilization</span></div><div style="position: absolute; left: 20px; top: 300px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 66px; font-size: 14.5px; animation: up .45s 13s both;"><span class="sn" style="background: #C2410C;">&#9201;</span><span>Available = <b>8 h &times; business days</b>, minus PTO. Through yesterday only.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Utilization &middot; 1 of 3</div>
+<div class="tt" style="font-size: 26px;">How much of your day is logged</div>
+<div class="bl" style="animation: fromR .6s 9s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Logged hours &divide; available hours.</span></div>
+<div class="bl" style="animation: fromR .6s 13s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">8 hours a business day, minus PTO.</span></div>
+<div class="bl" style="animation: fromR .6s 15s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Today counts tomorrow.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 26s 30s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 20px; top: 14px; width: 320px; height: 210px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 31s both; justify-content: flex-start;"><span class="eb" style="color: #2F7A22;">Counts as logged</span><span style="font-size: 14px; color: #0B2545; line-height: 1.6;">&bull; Time on cases<br>&bull; Training<br>&bull; Team and internal meetings<br>&bull; Other admin time in My Day</span></div><div style="position: absolute; left: 360px; top: 14px; width: 320px; height: 210px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 33s both; justify-content: flex-start;"><span class="eb" style="color: #C2410C;">PTO</span><span style="font-size: 14px; color: #0B2545; line-height: 1.6;">Not logged time. It lowers your <b>available</b> hours instead, so a day off never hurts your %.</span></div><div style="position: absolute; left: 20px; top: 240px; width: 660px; height: 138px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 37s both;"><span style="font-size: 15px; font-weight: 800; line-height: 1.6;">Example: 20 business days &times; 8 h = 160 h. One PTO day: 160 &minus; 8 = <b style="color: #FFD27A;">152 h available</b>.<br>You logged 140 h: 140 &divide; 152 = <b style="color: #8FD16F;">92%</b>. On target.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Utilization &middot; 2 of 3</div>
+<div class="tt" style="font-size: 26px;">What counts</div>
+<div class="bl" style="animation: fromR .6s 31s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">1</span><span class="bt" style="font-size: 18px;">Cases, training, meetings: all count.</span></div>
+<div class="bl" style="animation: fromR .6s 33s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">PTO lowers available hours.</span></div>
+<div class="bl" style="animation: fromR .6s 37s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">3</span><span class="bt" style="font-size: 18px;">140 &divide; 152 = 92%.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 26s 56s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 660px; height: 230px; padding: 14px 18px; animation: zoomIn .6s 56.5s both;"><div style="display: flex; gap: 14px; font-size: 12px; font-weight: 700; color: #3B4F6B; margin-bottom: 10px;"><span><i style="display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: #C2410C;"></i> Below target</span><span><i style="display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: #2F7A22;"></i> On target</span><span><i style="display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: #B42318;"></i> Over 110%: check entries</span></div><div style="position: relative; height: 40px; display: flex; align-items: center; font-size: 13.5px; font-weight: 700; color: #0B2545;"><span style="width: 120px;">Alex R.</span><span style="position: absolute; left: 132px; height: 22px; width: 360px; border-radius: 4px; background: #2F7A22; transform-origin: left; animation: grow .8s 57.5s both;"></span><span style="position: absolute; left: 500px; font-size: 13px; font-weight: 900; color: #0B2545; animation: fadeIn .4s 58.1s both;">92%</span></div><div style="position: relative; height: 40px; display: flex; align-items: center; font-size: 13.5px; font-weight: 700; color: #0B2545;"><span style="width: 120px;">Sam L.</span><span style="position: absolute; left: 132px; height: 22px; width: 379px; border-radius: 4px; background: #2F7A22; transform-origin: left; animation: grow .8s 58s both;"></span><span style="position: absolute; left: 519px; font-size: 13px; font-weight: 900; color: #0B2545; animation: fadeIn .4s 58.6s both;">97%</span></div><div style="position: relative; height: 40px; display: flex; align-items: center; font-size: 13.5px; font-weight: 700; color: #0B2545;"><span style="width: 120px;">Jordan P.</span><span style="position: absolute; left: 132px; height: 22px; width: 329px; border-radius: 4px; background: #C2410C; transform-origin: left; animation: grow .8s 58.5s both;"></span><span style="position: absolute; left: 469px; font-size: 13px; font-weight: 900; color: #0B2545; animation: fadeIn .4s 59.1s both;">84%</span></div><div style="position: relative; height: 40px; display: flex; align-items: center; font-size: 13.5px; font-weight: 700; color: #0B2545;"><span style="width: 120px;">Taylor M.</span><span style="position: absolute; left: 132px; height: 22px; width: 462px; border-radius: 4px; background: #B42318; transform-origin: left; animation: grow .8s 59s both;"></span><span style="position: absolute; left: 602px; font-size: 13px; font-weight: 900; color: #0B2545; animation: fadeIn .4s 59.6s both;">118%</span></div><div style="position: absolute; left: 502px; top: 44px; bottom: 30px; border-left: 2px dashed #0B2545; animation: fadeIn .4s 57.5s both;"></div><div style="position: absolute; left: 472px; bottom: 10px; font-size: 11px; font-weight: 900; color: #0B2545;">Target 90%</div></div><div style="position: absolute; right: 26px; top: 20px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 258px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 56px; font-size: 14.5px; animation: up .45s 62s both;"><span class="sn" style="background: #2F7A22;">1</span><span>Log training and planned time <b>at the start</b> of your shift.</span></div><div class="row" style="height: 56px; font-size: 14.5px; animation: up .45s 64s both;"><span class="sn" style="background: #1466F0;">2</span><span>Log time in <b>every case</b> as you work it. Check the total before you log off.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Utilization &middot; 3 of 3</div>
+<div class="tt" style="font-size: 26px;">Read the chart, hit the target</div>
+<div class="bl" style="animation: fromR .6s 58s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">1</span><span class="bt" style="font-size: 18px;">Orange: below 90%. Find missing time.</span></div>
+<div class="bl" style="animation: fromR .6s 58.5s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">Green: on target.</span></div>
+<div class="bl" style="animation: fromR .6s 59.5s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">3</span><span class="bt" style="font-size: 18px;">Red, over 110%: check for doubled entries.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 70s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Tip</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Log it, or it didn&rsquo;t happen. Watch Logging Time in My Day for the steps.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 3 · ESCALATE ============ -->
+<template id="scene-3">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 3: Cases touched</div><div class="h2s">Goal: about 200&ndash;250 cases a month, at full workload.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 26s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">Definitions</span></div><div class="st">Touched vs worked</div><svg class="mk" width="28" height="28" style="animation: pop .5s 29.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #FCE3CC; color: #C2410C; animation: up .6s 1.6s both, litRing 26s 30s both;"><div class="sr"><span class="sn" style="background: #C2410C;">2</span><span class="tg" style="background: #C2410C;">The math</span></div><div class="st">Monthly pace</div><svg class="mk" width="28" height="28" style="animation: pop .5s 55.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Your second number.</div>
+<div class="win" style="animation: win 26s 4s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div style="position: absolute; left: 20px; top: 14px; width: 320px; height: 220px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 5s both; justify-content: flex-start;"><span class="eb" style="color: #1466F0;">Touched</span><span style="font-size: 14.5px; font-weight: 700; color: #0B2545; line-height: 1.5;">You <b>posted</b> on the case (a note, link or file), or <b>sent an email</b> from it.</span><span style="font-size: 13px; color: #3B4F6B; line-height: 1.45;">Example: a customer-visible note on case 00123456.</span></div><div style="position: absolute; left: 360px; top: 14px; width: 320px; height: 220px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 8s both; justify-content: flex-start;"><span class="eb" style="color: #2F7A22;">Worked</span><span style="font-size: 14.5px; font-weight: 700; color: #0B2545; line-height: 1.5;">You <b>logged My Day time</b> against the case.</span><span style="font-size: 13px; color: #3B4F6B; line-height: 1.45;">Example: 20 minutes reproducing a broken button.</span></div><div style="position: absolute; left: 20px; top: 250px; width: 660px; height: 128px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 12s both;"><span style="font-size: 15.5px; font-weight: 900; line-height: 1.5;">A case can be both. Each case counts once per agent in the period, no matter how many posts you add.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Cases &middot; 1 of 2</div>
+<div class="tt" style="font-size: 26px;">Touched and worked</div>
+<div class="bl" style="animation: fromR .6s 5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Touched: you posted or emailed.</span></div>
+<div class="bl" style="animation: fromR .6s 8s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">Worked: you logged time.</span></div>
+<div class="bl" style="animation: fromR .6s 12s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">3</span><span class="bt" style="font-size: 18px;">Each case counts once.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 26s 30s both;">
+<div class="shot" style="background: #FCE3CC; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 300px; height: 160px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 30.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Monthly pace</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #2F7A22;">200</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">Cases touched per month &middot; target 200&ndash;250</span></div><div style="position: absolute; right: 26px; top: 20px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 200px; width: 660px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;"><span style="padding: 10px 14px; border-radius: 12px; background: #DCE7F7; border: 2px solid #1466F0; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 33s both;">95 touched</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 33.8s both;">&divide;</span><span style="padding: 10px 14px; border-radius: 12px; background: #FCE3CC; border: 2px solid #C2410C; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 34.6s both;">10 days</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 35.4s both;">&times;</span><span style="padding: 10px 14px; border-radius: 12px; background: #E3E8F0; border: 2px solid #0B2545; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 36.2s both;">21 days</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 37s both;">=</span><span style="padding: 10px 14px; border-radius: 12px; background: #E5F4DE; border: 2px solid #2F7A22; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 37.8s both;">~200 / month</span></div><div style="position: absolute; left: 20px; top: 280px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 46px; font-size: 14.5px; animation: up .45s 39s both;"><span class="sn" style="background: #2F7A22;">&#10003;</span><span>Clean your queue daily: Express and Critical first, then Standard.</span></div><div class="row" style="height: 46px; font-size: 14.5px; animation: up .45s 41s both;"><span class="sn" style="background: #1466F0;">&#10003;</span><span>Every update you post moves a case, and counts as touched.</span></div></div><div style="position: absolute; left: 340px; top: 14px; width: 340px; height: 160px; border-radius: 14px; background: #F3F6FB; padding: 14px 16px; font-size: 13.5px; color: #0B2545; line-height: 1.5; animation: fadeIn .5s 32s both;"><b>Pace</b> projects your month from the days you&rsquo;ve had so far, so you can see it mid-month, after PTO, or in your first weeks.</div></div>
+<div class="tc2">
+<div class="eb" style="color: #C2410C;">Cases &middot; 2 of 2</div>
+<div class="tt" style="font-size: 26px;">Your monthly pace</div>
+<div class="bl" style="animation: fromR .6s 33s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Touched &divide; available days &times; 21.</span></div>
+<div class="bl" style="animation: fromR .6s 36s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">Target: about 200&ndash;250 a month.</span></div>
+<div class="bl" style="animation: fromR .6s 39s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Queue clean, every day.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 45s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Good to know</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">New to the team? Your pace grows as you learn. The target is for a full workload.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 4 · PROTECT CASES ============ -->
+<template id="scene-4">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 4: Time to Start (TTS)</div><div class="h2s">Goal: Standard 90%+, Express and Critical 100%.</div></div>
+<div class="sc" style="left: 40px; width: 389.33px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 26s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">Rules</span></div><div class="st">The clock</div><svg class="mk" width="28" height="28" style="animation: pop .5s 29.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 445.33px; width: 389.33px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.6s both, litRing 26s 30s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">2</span><span class="tg" style="background: #2F7A22;">On time</span></div><div class="st">The cards</div><svg class="mk" width="28" height="28" style="animation: pop .5s 55.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 850.67px; width: 389.33px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.8s both, litRing 26s 56s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">3</span><span class="tg" style="background: #2F7A22;">Habits</span></div><div class="st">Hit it</div><svg class="mk" width="28" height="28" style="animation: pop .5s 81.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Your third number.</div>
+<div class="win" style="animation: win 26s 4s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div style="position: absolute; left: 20px; top: 20px; width: 660px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;"><span style="padding: 10px 14px; border-radius: 12px; background: #E3E8F0; border: 2px solid #0B2545; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 5s both;">Customer opens a Portal case</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 5.8s both;">&rarr;</span><span style="padding: 10px 14px; border-radius: 12px; background: #FCE3CC; border: 2px solid #C2410C; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 6.6s both;">Clock starts</span><span style="font-size: 26px; font-weight: 900; color: #3B4F6B; animation: fadeIn .4s 7.4s both;">&rarr;</span><span style="padding: 10px 14px; border-radius: 12px; background: #E5F4DE; border: 2px solid #2F7A22; font-size: 15px; font-weight: 900; color: #0B2545; text-align: center; animation: pop .45s 8.2s both;">Milestone completed or customer-visible note</span></div><div class="wc" style="left: 20px; top: 150px; width: 660px; height: 148px; overflow: hidden; animation: zoomIn .6s 9s both;"><div style="display: flex; background: #0B2545; color: #FFF; font-size: 11px; font-weight: 900; letter-spacing: .04em;"><span style="flex: 1; padding: 8px 6px; text-align: left;">Priority</span><span style="flex: 3; padding: 8px 6px; text-align: right;">Time to start</span><span style="flex: 0.8; padding: 8px 6px; text-align: right;">Target</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 10s both;"><span style="flex: 1; padding: 9px 6px; text-align: left; font-weight: 700;">Standard</span><span style="flex: 3; padding: 9px 6px; text-align: right; font-weight: 400;">1 business day (24 h, no weekends or US holidays)</span><span style="flex: 0.8; padding: 9px 6px; text-align: right; font-weight: 400;">90%+</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; background: #F7F9FC; animation: up .35s 10.4s both;"><span style="flex: 1; padding: 9px 6px; text-align: left; font-weight: 700;">Express</span><span style="flex: 3; padding: 9px 6px; text-align: right; font-weight: 400;">1 hour</span><span style="flex: 0.8; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 10.8s both;"><span style="flex: 1; padding: 9px 6px; text-align: left; font-weight: 700;">Critical</span><span style="flex: 3; padding: 9px 6px; text-align: right; font-weight: 400;">30 minutes</span><span style="flex: 0.8; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span></div></div><div style="position: absolute; left: 20px; top: 312px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 60px; font-size: 14.5px; animation: up .45s 14s both;"><span class="sn" style="background: #B42318;">&#9888;</span><span>Only customer <b>Portal</b> cases count, against the <b>original</b> due time. Translation Feedback is left out.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Time to Start &middot; 1 of 3</div>
+<div class="tt" style="font-size: 26px;">How fast you start</div>
+<div class="bl" style="animation: fromR .6s 5s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">1</span><span class="bt" style="font-size: 18px;">The clock starts when the case comes in.</span></div>
+<div class="bl" style="animation: fromR .6s 7s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">It stops at the milestone or a customer-visible note.</span></div>
+<div class="bl" style="animation: fromR .6s 14s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">3</span><span class="bt" style="font-size: 18px;">Portal cases, original due time.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 26s 30s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 206px; height: 210px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 30.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Standard &middot; 1 day</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #2F7A22;">94%</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">47 of 50 on time &middot; target 90%<br>3 missed &middot; 2 still open</span></div><div class="wc" style="left: 247px; top: 14px; width: 206px; height: 210px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 31.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Express &middot; 1 hour</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #2F7A22;">100%</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">9 of 9 on time &middot; target 100%<br>0 missed &middot; 0 still open</span></div><div class="wc" style="left: 474px; top: 14px; width: 206px; height: 210px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 32.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Critical &middot; 30 min</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #B42318;">75%</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">3 of 4 on time &middot; target 100%<br>1 missed &middot; 0 still open</span></div><div style="position: absolute; right: 26px; top: 229px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 252px; width: 660px; height: 126px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 37s both; justify-content: flex-start;"><span class="eb" style="color: #C2410C;">Still open</span><span style="font-size: 14px; color: #0B2545; line-height: 1.5;">Not due yet, so it&rsquo;s left out of the %. Express and Critical clocks run nonstop for 24/7 customers. For other customers they only run Monday to Friday, 7 a.m. to 7 p.m. Eastern.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Time to Start &middot; 2 of 3</div>
+<div class="tt" style="font-size: 26px;">Read the three cards</div>
+<div class="bl" style="animation: fromR .6s 31s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">1</span><span class="bt" style="font-size: 18px;">X of Y on time = your %.</span></div>
+<div class="bl" style="animation: fromR .6s 33s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">2</span><span class="bt" style="font-size: 18px;">One missed Critical drops you below 100%.</span></div>
+<div class="bl" style="animation: fromR .6s 37s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">3</span><span class="bt" style="font-size: 18px;">Still open: not counted yet.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 26s 56s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div style="position: absolute; left: 20px; top: 14px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 60px; font-size: 14.5px; animation: up .45s 57s both;"><span class="sn" style="background: #1466F0;">1</span><span>Open your <b>List View</b> first thing. Sort by <b>Due Date</b>.</span></div><div class="row" style="height: 60px; font-size: 14.5px; animation: up .45s 59s both;"><span class="sn" style="background: #B42318;">2</span><span><b>Express and Critical first</b>. Their clocks are short.</span></div><div class="row" style="height: 60px; font-size: 14.5px; animation: up .45s 61s both;"><span class="sn" style="background: #2F7A22;">3</span><span>Read the case, then <b>complete the milestone</b> right away.</span></div><div class="row" style="height: 60px; font-size: 14.5px; animation: up .45s 63s both;"><span class="sn" style="background: #2F7A22;">4</span><span>Add a <b>customer-visible note</b>: thanks, and the next step.</span></div><div class="row" style="height: 60px; font-size: 14.5px; animation: up .45s 65s both;"><span class="sn" style="background: #C2410C;">5</span><span>The case is credited to the <b>first Support person</b> who acts on it.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Time to Start &middot; 3 of 3</div>
+<div class="tt" style="font-size: 26px;">How to hit 100%</div>
+<div class="bl" style="animation: fromR .6s 57s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Queue first, sorted by Due Date.</span></div>
+<div class="bl" style="animation: fromR .6s 59s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">2</span><span class="bt" style="font-size: 18px;">Express and Critical first.</span></div>
+<div class="bl" style="animation: fromR .6s 61s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Milestone plus a customer-visible note.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 70s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Tip</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Acknowledge fast. You can work the case right after, but the clock only cares that you started.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 5 · ANY TIME ============ -->
+<template id="scene-5">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 5: Agent detail and missed TTS</div><div class="h2s">Your row, and the cases to learn from.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 26s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">Your row</span></div><div class="st">Agent detail</div><svg class="mk" width="28" height="28" style="animation: pop .5s 29.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #FFF1F0; color: #B42318; animation: up .6s 1.6s both, litRing 26s 30s both;"><div class="sr"><span class="sn" style="background: #B42318;">2</span><span class="tg" style="background: #B42318;">Review</span></div><div class="st">Missed TTS</div><svg class="mk" width="28" height="28" style="animation: pop .5s 55.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">The detail.</div>
+<div class="win" style="animation: win 26s 4s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 660px; height: 170px; overflow: hidden; animation: zoomIn .6s 4.5s both;"><div style="display: flex; background: #0B2545; color: #FFF; font-size: 11px; font-weight: 900; letter-spacing: .04em;"><span style="flex: 1.6; padding: 8px 6px; text-align: left;">Agent</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Logged h</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Today h</span><span style="flex: 1; padding: 8px 6px; text-align: right;">PTO h</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Avail. h</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Util.</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Touched</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Pace</span><span style="flex: 1; padding: 8px 6px; text-align: right;">TTS Std</span><span style="flex: 1; padding: 8px 6px; text-align: right;">TTS Exp</span><span style="flex: 1; padding: 8px 6px; text-align: right;">TTS Crit</span><span style="flex: 1; padding: 8px 6px; text-align: right;">Bill. h</span><span style="flex: 1; padding: 8px 6px; text-align: right;">% Bill.</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; background: #FFF4D6; box-shadow: inset 0 0 0 2px #F6A600; animation: up .35s 5.5s both;"><span style="flex: 1.6; padding: 9px 6px; text-align: left; font-weight: 700;">Alex R.</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">140</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">3.5</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">8</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">152</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">92%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">95</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">200</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">94%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">75%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">22</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">16%</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; background: #F7F9FC; animation: up .35s 5.9s both;"><span style="flex: 1.6; padding: 9px 6px; text-align: left; font-weight: 700;">Sam L.</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">155</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">4.0</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">0</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">160</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">97%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">118</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">248</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">96%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">30</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">19%</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 6.3s both;"><span style="flex: 1.6; padding: 9px 6px; text-align: left; font-weight: 700;">Jordan P.</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">128</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">2.0</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">8</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">152</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">84%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">80</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">168</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">88%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">100%</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">15</span><span style="flex: 1; padding: 9px 6px; text-align: right; font-weight: 400;">12%</span></div></div><div style="position: absolute; right: 26px; top: 187px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 212px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 74px; font-size: 14.5px; animation: up .45s 10s both;"><span class="sn" style="background: #1466F0;">&#9201;</span><span><b>Logged, Available, Billable</b>: through yesterday. <b>Today h</b>: so far today.</span></div><div class="row" style="height: 74px; font-size: 14.5px; animation: up .45s 12.5s both;"><span class="sn" style="background: #C2410C;">$</span><span><b>Billable h</b> and <b>% Billable</b> have no target. Just use the Billable category correctly.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Agent detail &middot; 1 of 2</div>
+<div class="tt" style="font-size: 26px;">Your whole row</div>
+<div class="bl" style="animation: fromR .6s 5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Every goal in one line.</span></div>
+<div class="bl" style="animation: fromR .6s 12.5s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">Billable: no target, just be accurate.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 19s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Refresher</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Not sure if something is billable? The Billing Your Support Time training has every rule.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 26s 30s both;">
+<div class="shot" style="background: #FFF1F0; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 660px; height: 170px; overflow: hidden; animation: zoomIn .6s 30.5s both;"><div style="display: flex; background: #0B2545; color: #FFF; font-size: 11px; font-weight: 900; letter-spacing: .04em;"><span style="flex: 1; padding: 8px 6px; text-align: left;">Case</span><span style="flex: 0.9; padding: 8px 6px; text-align: right;">Priority</span><span style="flex: 1.7; padding: 8px 6px; text-align: right;">Came in &middot; due</span><span style="flex: 1.3; padding: 8px 6px; text-align: right;">Acknowledged</span><span style="flex: 0.9; padding: 8px 6px; text-align: right;">Late by</span><span style="flex: 1.7; padding: 8px 6px; text-align: right;">Missed by</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 31.5s both;"><span style="flex: 1; padding: 9px 6px; text-align: left; font-weight: 700;">00123456</span><span style="flex: 0.9; padding: 9px 6px; text-align: right; font-weight: 400;">Critical</span><span style="flex: 1.7; padding: 9px 6px; text-align: right; font-weight: 400;">Nov 3, 9:10 &middot; 9:40</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">Nov 3, 10:05</span><span style="flex: 0.9; padding: 9px 6px; text-align: right; font-weight: 400;">25 min</span><span style="flex: 1.7; padding: 9px 6px; text-align: right; font-weight: 400;">Alex R.</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; background: #F7F9FC; animation: up .35s 31.9s both;"><span style="flex: 1; padding: 9px 6px; text-align: left; font-weight: 700;">00123399</span><span style="flex: 0.9; padding: 9px 6px; text-align: right; font-weight: 400;">Standard</span><span style="flex: 1.7; padding: 9px 6px; text-align: right; font-weight: 400;">Oct 31 &middot; Nov 3</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">Nov 3, 11:20</span><span style="flex: 0.9; padding: 9px 6px; text-align: right; font-weight: 400;">1 h 20 min</span><span style="flex: 1.7; padding: 9px 6px; text-align: right; font-weight: 400;">Alex R.</span></div><div style="display: flex; font-size: 12.5px; color: #0B2545; border-bottom: 1px solid #EEF1F5; animation: up .35s 32.3s both;"><span style="flex: 1; padding: 9px 6px; text-align: left; font-weight: 700;">00123301</span><span style="flex: 0.9; padding: 9px 6px; text-align: right; font-weight: 400;">Express</span><span style="flex: 1.7; padding: 9px 6px; text-align: right; font-weight: 400;">Oct 30, 6:50 &middot; 7:50</span><span style="flex: 1.3; padding: 9px 6px; text-align: right; font-weight: 400;">&mdash;</span><span style="flex: 0.9; padding: 9px 6px; text-align: right; font-weight: 400;">3 h</span><span style="flex: 1.7; padding: 9px 6px; text-align: right; font-weight: 400;">Not acknowledged by Support</span></div></div><div style="position: absolute; right: 26px; top: 187px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 212px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 74px; font-size: 14.5px; animation: up .45s 36s both;"><span class="sn" style="background: #1466F0;">1</span><span>Every missed case is listed, newest first. Pick your name to see only yours.</span></div><div class="row" style="height: 74px; font-size: 14.5px; animation: up .45s 38.5s both;"><span class="sn" style="background: #C2410C;">2</span><span>Ask: what happened? Too late in the queue? Missed a milestone? Learn from each one.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #B42318;">Missed TTS &middot; 2 of 2</div>
+<div class="tt" style="font-size: 26px;">Learn from every miss</div>
+<div class="bl" style="animation: fromR .6s 32s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">1</span><span class="bt" style="font-size: 18px;">Late by: past the original due time.</span></div>
+<div class="bl" style="animation: fromR .6s 33s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">Missed by: who acknowledged late.</span></div>
+<div class="bl" style="animation: fromR .6s 34s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">3</span><span class="bt" style="font-size: 18px;">Not acknowledged by Support: nobody acted.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 6 · FOLLOW UP ============ -->
+<template id="scene-6">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 6: New and closed, and the big picture</div><div class="h2s">Your cases, your goals, and the team&rsquo;s.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 24s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">Cases</span></div><div class="st">New and closed</div><svg class="mk" width="28" height="28" style="animation: pop .5s 27.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #E8EAFD; color: #5867E8; animation: up .6s 1.6s both, litRing 24s 28s both;"><div class="sr"><span class="sn" style="background: #5867E8;">2</span><span class="tg" style="background: #5867E8;">Big picture</span></div><div class="st">KPIs and OKRs</div><svg class="mk" width="28" height="28" style="animation: pop .5s 51.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Putting it together.</div>
+<div class="win" style="animation: win 24s 4s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 20px; top: 14px; width: 320px; height: 160px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 4.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">New</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #1466F0;">42</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">Came in during the period</span></div><div class="wc" style="left: 360px; top: 14px; width: 320px; height: 160px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; animation: zoomIn .6s 5.5s both;"><span style="font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #3B4F6B;">Closed</span><span class="disp" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: #2F7A22;">57</span><span style="font-size: 12.5px; color: #3B4F6B; line-height: 1.4;">Closed in the period</span></div><div style="position: absolute; right: 26px; top: 20px; padding: 3px 9px; border-radius: 6px; background: #0B2545; color: #FFD27A; font-size: 11px; font-weight: 900; letter-spacing: .08em;">EXAMPLE</div><div style="position: absolute; left: 20px; top: 192px; width: 660px; display: flex; flex-direction: column; gap: 8px;"><div class="row" style="height: 56px; font-size: 14.5px; animation: up .45s 8s both;"><span class="sn" style="background: #1466F0;">&#9432;</span><span>Only cases <b>you logged My Day time on</b> in the period.</span></div><div class="row" style="height: 56px; font-size: 14.5px; animation: up .45s 10s both;"><span class="sn" style="background: #C2410C;">&#9432;</span><span>A case that came in and closed in the same period counts in both.</span></div><div class="row" style="height: 56px; font-size: 14.5px; animation: up .45s 12s both;"><span class="sn" style="background: #2F7A22;">&#10003;</span><span>Closing cases you validated is part of the job. Follow up on overdue ones.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">New and closed &middot; 1 of 2</div>
+<div class="tt" style="font-size: 26px;">What came in, what got done</div>
+<div class="bl" style="animation: fromR .6s 5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">New: opened in the period.</span></div>
+<div class="bl" style="animation: fromR .6s 6s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">Closed: closed in the period.</span></div>
+<div class="bl" style="animation: fromR .6s 8s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">3</span><span class="bt" style="font-size: 18px;">Only cases with your time logged.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 24s 28s both;">
+<div class="shot" style="background: #E8EAFD; display: block;"><div style="position: absolute; left: 20px; top: 14px; width: 320px; height: 230px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 29s both; justify-content: flex-start;"><span class="eb" style="color: #1466F0;">Your KPIs</span><span class="disp" style="font-size: 20px; font-weight: 700; color: #0B2545;">Your personal goals</span><span style="font-size: 14px; color: #0B2545; line-height: 1.5;">Utilization, TTS and cases. Steady targets, measured every quarter on this dashboard.</span></div><div style="position: absolute; left: 360px; top: 14px; width: 320px; height: 230px; border-radius: 16px; background: #E8EAFD; border: 3px solid #5867E8; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 33s both; justify-content: flex-start;"><span class="eb" style="color: #5867E8;">Team OKRs</span><span class="disp" style="font-size: 20px; font-weight: 700; color: #0B2545;">The team&rsquo;s quarterly objectives</span><span style="font-size: 14px; color: #0B2545; line-height: 1.5;">Support also helps the company meet its OKRs each quarter. They&rsquo;re explained to you once they&rsquo;re made and approved.</span></div><div style="position: absolute; left: 20px; top: 260px; width: 660px; height: 118px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 38s both;"><span style="font-size: 15.5px; font-weight: 900; line-height: 1.5;">Hit your KPIs, and you&rsquo;re already helping the team&rsquo;s OKRs. Tier II and the Director review the numbers with you.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #5867E8;">The big picture &middot; 2 of 2</div>
+<div class="tt" style="font-size: 26px;">KPIs and OKRs</div>
+<div class="bl" style="animation: fromR .6s 29s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">KPIs: your goals, every quarter.</span></div>
+<div class="bl" style="animation: fromR .6s 33s both;"><span class="bn" style="background: #E8EAFD; color: #5867E8;">2</span><span class="bt" style="font-size: 18px;">OKRs: the team&rsquo;s quarterly objectives.</span></div>
+<div class="bl" style="animation: fromR .6s 35s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Explained when approved.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 7 · PRACTICE ============ -->
+<template id="scene-7">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 7: Practice. What would you do?</div><div class="h2s">Think of your answer before it appears.</div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 4s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Situation 1</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Your utilization shows 84%, in orange.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FCE3CC; border: 3px solid #C2410C; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 9s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Below target. Find the missing hours: training, meetings, or case time you didn&rsquo;t log.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 14s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Situation 2</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Your bar is red: 118%.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FFF1F0; border: 3px solid #B42318; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 19s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Over 110%. Check for doubled or wrong entries in My Day and your cases.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 24s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Situation 3</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">You took one PTO day this month. Does it hurt your utilization?</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 29s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">No. PTO lowers your available hours, so your % stays fair.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 34s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Situation 4</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">An Express case came in 50 minutes ago. You haven&rsquo;t touched it.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FFF1F0; border: 3px solid #B42318; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 39s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Act now: complete the milestone and add a customer-visible note. The clock is 1 hour.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 44s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Situation 5</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Your monthly pace is 150 in your third week.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #DCE7F7; border: 3px solid #1466F0; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 49s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">You&rsquo;re still learning. Keep your queue clean daily, and your pace will grow toward 200&ndash;250.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 54s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Situation 6</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">A case shows up in your Missed TTS list.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #E3E8F0; border: 3px solid #0B2545; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 59s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Open it, see why it was late, and fix the habit that caused it.</span></div></div>
+<div style="position: absolute; left: 40px; top: 66px; width: 1200px; height: 566px; border-radius: 22px; background: #DCE7F7; padding: 22px 26px; display: flex; flex-direction: column; gap: 10px; animation: pop .6s 66s both;"><span class="disp" style="font-size: 26px; font-weight: 700; color: #0B2545; margin-bottom: 4px;">Recap: reading the dashboard</span><div class="row" style="height: 62px; font-size: 16.5px; font-weight: 700; animation: up .5s 67.5s both;"><span class="sn" style="background: #1466F0;">1</span><span><b>Utilization:</b> logged &divide; available hours. Goal 90%+</span></div><div class="row" style="height: 62px; font-size: 16.5px; font-weight: 700; animation: up .5s 69.7s both;"><span class="sn" style="background: #1466F0;">2</span><span><b>Cases touched:</b> posted or emailed. Pace goal about 200&ndash;250 a month</span></div><div class="row" style="height: 62px; font-size: 16.5px; font-weight: 700; animation: up .5s 71.9s both;"><span class="sn" style="background: #1466F0;">3</span><span><b>TTS:</b> milestone or customer-visible note in time. Standard 90%+, Express and Critical 100%</span></div><div class="row" style="height: 62px; font-size: 16.5px; font-weight: 700; animation: up .5s 74.1s both;"><span class="sn" style="background: #1466F0;">4</span><span><b>Agent detail:</b> your whole row. Billable: no target, just accurate</span></div><div class="row" style="height: 62px; font-size: 16.5px; font-weight: 700; animation: up .5s 76.3s both;"><span class="sn" style="background: #1466F0;">5</span><span><b>Missed TTS:</b> review every one, and learn from it</span></div><div class="row" style="height: 62px; font-size: 16.5px; font-weight: 700; animation: up .5s 78.5s both;"><span class="sn" style="background: #1466F0;">6</span><span><b>KPIs</b> every quarter. <b>OKRs</b> explained once approved</span></div><div style="margin-top: auto; padding: 14px 20px; border-radius: 14px; background: #0B2545; color: #FFFFFF; font-size: 20px; font-weight: 900; animation: pop .5s 82s both;">Questions about your numbers? Ask: Support team, Tier II or Director of Customer Support.</div></div>
+</div>
+</template>
+
+<div id="sceneHost" style="position: absolute; inset: 0;"></div>
+
+<!-- ============ COVER ============ -->
+<div id="cover">
+<div style="position: absolute; inset: 0; background: #0B2545; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; color: #FFFFFF;">
+<div style="font-size: 16px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #8FD16F;">MotionPoint Support &middot; New Agent Training</div>
+<h1 class="disp" style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 700;">Reading the Support Performance Dashboard</h1>
+<p style="margin: 0; font-size: 22px; color: #C9D6E8; max-width: 800px;">What every number on the Support Performance Dashboard means, and how to meet your goals. About 8 minutes, with background music.</p>
+<button type="button" id="coverPlay" style="margin-top: 14px; height: 72px; padding: 0 40px; border-radius: 36px; border: none; background: #1466F0; color: #FFFFFF; font-family: 'Lexend', sans-serif; font-size: 26px; font-weight: 600; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 16px 40px rgba(20,102,240,.45);">
+<svg width="26" height="26" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#FFFFFF"></path></svg>Play</button>
+</div>
+</div>
+
+</div>
+
+<!-- ===================== SUBTITLES ===================== -->
+<div style="height: 70px; flex-shrink: 0; background: #0B1626; display: flex; align-items: center; justify-content: center; padding: 0 48px; position: relative; overflow: hidden;">
+<div id="subs" style="display: contents;"></div>
+</div>
+
+<!-- ===================== CONTROLS ===================== -->
+<div style="height: 80px; flex-shrink: 0; background: #0E1B2E; display: flex; flex-direction: column;">
+<div style="height: 6px; background: #1D2E48;"><div id="prog" style="height: 6px; width: 0%; background: #5DB645;"></div></div>
+<div style="flex-grow: 1; display: flex; align-items: center; gap: 10px; padding: 0 20px;">
+<button type="button" class="ctl main" id="playBtn" aria-label="Play">
+<span id="icoPause" style="display: contents;" hidden><svg width="18" height="18" viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1" fill="#FFFFFF"></rect><rect x="14" y="4.5" width="4" height="15" rx="1" fill="#FFFFFF"></rect></svg></span>
+<span id="icoPlay" style="display: contents;"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#FFFFFF"></path></svg></span>
+<span id="playLabel">Play</span>
+</button>
+<button type="button" class="ctl" id="replayBtn" aria-label="Replay from start">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+</button>
+<button type="button" class="ctl" id="back10Btn" aria-label="Back 10 seconds" title="Back 10 seconds (Left arrow)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5"></path><path d="M18 17l-5-5 5-5"></path></svg>
+<span>10s</span>
+</button>
+<button type="button" class="ctl" id="fwd10Btn" aria-label="Forward 10 seconds" title="Forward 10 seconds (Right arrow)">
+<span>10s</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5"></path><path d="M6 17l5-5-5-5"></path></svg>
+</button>
+<button type="button" class="ctl" id="musicBtn" aria-label="Music on" aria-pressed="true">
+<span id="icoMusicOn" style="display: contents;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8FD16F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></span>
+<span id="icoMusicOff" style="display: contents;" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A9B8CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle><path d="M3 3l18 18"></path></svg></span>
+<span id="musicLabel" style="display:none">Music on</span>
+</button>
+<button type="button" class="ctl" id="subsBtn" aria-label="Hide captions" aria-pressed="true">
+<svg width="22" height="18" viewBox="0 0 26 20" fill="none" id="subsIcon" stroke="#8FD16F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="23" height="17" rx="3"></rect><path d="M11 8.2a3 3 0 1 0 0 3.6"></path><path d="M19 8.2a3 3 0 1 0 0 3.6"></path></svg>
+</button>
+<button type="button" class="ctl" id="prevBtn" aria-label="Previous scene">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<button type="button" class="ctl" id="nextBtn" aria-label="Next scene">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+<div style="width: 1px; height: 30px; background: #2A3E5C; margin: 0 4px;"></div>
+<div style="display: flex; gap: 4px; flex-grow: 1; overflow: hidden;">
+<span id="chapters" style="display: contents;"></span>
+</div>
+<div style="font-size: 14px; font-weight: 700; color: #A9B8CC; white-space: nowrap; font-variant-numeric: tabular-nums;" id="timeLabel">0:00</div>
+</div>
+</div>
+
+
+</div>
+</div>
+<script>
+const STEP_HTML = "<div style=\"height: 52px; padding: 0 18px 0 6px; border-radius: 26px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 16px rgba(11,37,69,.22); animation: pop 0.78s ease both;\">\n<span class=\"disp\" style=\"width: 40px; height: 40px; border-radius: 20px; background: #5DB645; color: #0B2545; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700;\">{{st.n}}</span>\n<span style=\"font-size: 15px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase;\">Part {{st.n}} of 7</span>\n</div>";
+const SUB_OPEN = "<div style=\"position: absolute; left: 48px; right: 48px; top: 0; height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 22px; line-height: 1.3; font-weight: 700; color: #F4F7FB; animation: up 0.7s ease both;\">";
+function fit(){ const s = Math.min(window.innerWidth / 1280, window.innerHeight / 870); document.getElementById('fit').style.transform = 'scale(' + s + ')'; }
+window.addEventListener('resize', fit); fit();
+class Player {
+  constructor() {
+    this.state = { scene: 0, el: 0, playing: false, started: false, ended: false, music: true, subsOn: true };
+    this.ctx = null;
+  }
+  durs() { return [26000, 52000, 82000, 56000, 82000, 56000, 52000, 90000]; }
+  subLines() {
+    return [[[0, "Welcome! This video shows you how to read the Support Performance Dashboard."], [5000, "Your first goal: utilization. 90 percent or more of your available hours, logged."], [9000, "Your second: Time to Start. 90 percent or more on Standard cases, and 100 percent on Express and Critical."], [13000, "And your third: about 200 to 250 cases touched a month, once you're at a full workload."], [18000, "The names and numbers in this video are examples. Your real numbers come from Salesforce."]],
+      [[0, "Part 1: find your way."], [5000, "The top line sums up the team for the period you pick. For example: team utilization is 93 percent for last month, with 5 of 6 agents at or above the 90 percent target."], [13000, "Use Period to choose the time you're looking at: today, yesterday, this or last week, month, quarter, year, or a custom range. Then pick your name under Agent to see only your numbers."], [28000, "Here are your three goals, your KPIs. Utilization 90 to 100 percent. TTS 90 to 100 percent on Standard cases, and 100 percent on Express and Critical. And about 200 to 250 cases touched a month at full workload."], [40000, "Your goals stay steady, and they're measured every quarter. Formal measurement starts after your first 90 days, so use that time to build the habits."]],
+      [[0, "Part 2: utilization."], [5000, "Utilization is your hours logged in My Day, divided by your available hours."], [11000, "Available hours are 8 hours times the business days in the period, minus PTO. Only days through yesterday count."], [16000, "Hours you log today show separately, as Today so far. They count tomorrow, once the day is over."], [30000, "What counts as logged? Time on cases, training, team and internal meetings, and other admin time in My Day."], [36000, "PTO isn't logged time. It lowers your available hours instead, so a day off never hurts your percentage."], [42000, "For example: 20 business days times 8 hours is 160 hours. One PTO day takes off 8, so 152 hours are available. You logged 140 hours. 140 divided by 152 is 92 percent. On target."], [56000, "The chart shows every agent. Orange means below 90 percent: find the missing time. Green means on target."], [62000, "Red, over 110 percent, means check your entries for doubled or wrong time."], [68000, "To hit the target, log training and planned time at the start of your shift. Log time in every case as you work it, and check your total before you log off. Log it, or it didn't happen."]],
+      [[0, "Part 3: cases touched."], [5000, "A case is touched when you post on it, a note, a link or a file, or send an email from it. For example, a customer-visible note."], [12000, "A case is worked when you log My Day time against it. For example, 20 minutes reproducing a broken button."], [18000, "A case can be both, and each case counts once per agent in the period, no matter how many posts you add."], [30000, "Your monthly pace projects your month from the days you've had so far. It's cases touched, divided by your available days, times 21."], [37000, "For example: 95 cases touched in 10 days, times 21, is about 200 a month. Right on target."], [43000, "To keep your pace up, clean your queue every day, Express and Critical first, then Standard. Every update you post moves a case, and counts."], [50000, "New to the team? Your pace grows as you learn. The target is for a full workload."]],
+      [[0, "Part 4: Time to Start, or TTS."], [5000, "When a customer opens a case in the portal, the clock starts. It stops when the Support Response milestone is completed, or Support adds a customer-visible note or email."], [13000, "Standard cases get one business day: 24 hours, not counting weekends or US holidays. Target: 90 percent or more. Express gets 1 hour, and Critical 30 minutes. Target: 100 percent."], [22000, "Only customer Portal cases count, measured against the original due time. Translation Feedback cases are left out."], [30000, "Each card shows how many cases were on time, out of the total. Here, Standard is 47 of 50, or 94 percent. On target."], [37000, "Critical is 3 of 4, or 75 percent. One missed Critical drops you below 100 percent."], [42000, "Still open means the case isn't due yet, so it's left out of the percentage. Express and Critical clocks run nonstop for 24/7 customers. For others, only Monday to Friday, 7 a.m. to 7 p.m. Eastern."], [56000, "How to hit 100 percent? Open your List View first thing, and sort by Due Date. Express and Critical first: their clocks are short."], [64000, "Read the case, complete the milestone right away, and add a customer-visible note with thanks and the next step."], [70000, "The case is credited to the first Support person who acts on it. Acknowledge fast. You can work the case right after."]],
+      [[0, "Part 5: agent detail and missed TTS."], [5000, "The Agent detail table puts all your numbers in one row: logged hours, today's hours, PTO, available hours, utilization, cases touched, pace, and TTS for each priority."], [14000, "Logged, available, and billable hours run through yesterday. Today shows what's logged so far today."], [19000, "Billable hours and percent billable have no target. Just use the Billable category correctly. The Billing Your Support Time training has every rule."], [30000, "Missed TTS to review lists every case that missed its original due time, newest first. Pick your name to see only yours."], [37000, "Late by is how long past the due time. Missed by is who acknowledged it late. Not acknowledged by Support means nobody in Support acted."], [45000, "For each one, ask what happened. Too late in the queue? Missed the milestone? Learn from it, and fix the habit."]],
+      [[0, "Part 6: new and closed, and the big picture."], [5000, "New and closed only count cases you logged My Day time on. New came in during the period. Closed was closed in the period."], [12000, "A case that came in and closed in the same period counts in both. Closing cases you validated is part of the job, so follow up on overdue ones."], [28000, "Your KPIs are your personal goals: utilization, TTS and cases. Steady targets, measured every quarter on this dashboard."], [33000, "Support also helps the company meet its OKRs, the team's objectives each quarter. They'll be explained to you once they're made and approved."], [40000, "Hit your KPIs, and you're already helping the team's OKRs. Tier II and the Director review the numbers with you."]],
+      [[0, "Part 7: practice. What would you do?"], [4000, "Your utilization shows 84 percent, in orange."], [9000, "Below target. Find the missing hours: training, meetings, or case time you didn't log."], [14000, "Your bar is red: 118 percent."], [19000, "Over 110 percent. Check for doubled or wrong entries in My Day and your cases."], [24000, "You took one PTO day this month. Does it hurt your utilization?"], [29000, "No. PTO lowers your available hours, so your percentage stays fair."], [34000, "An Express case came in 50 minutes ago, and you haven't touched it."], [39000, "Act now. Complete the milestone, and add a customer-visible note. The clock is 1 hour."], [44000, "Your monthly pace is 150 in your third week."], [49000, "You're still learning. Keep your queue clean every day, and your pace will grow toward 200 to 250."], [54000, "A case shows up in your Missed TTS list."], [59000, "Open it, see why it was late, and fix the habit that caused it."], [66000, "Quick recap."], [82000, "Questions about your numbers? Ask the Support team, Tier II, or the Director of Customer Support. Thanks for watching!"]]];
+  }
+  labels() { return ["Intro", "Basics", "Utilization", "Cases", "TTS", "Detail", "Big picture", "Practice"]; }
+
+  /* ---------- original background jazz, synthesized live ---------- */
+  bars() {
+    // [bass walk (MIDI), chord voicing (MIDI)] — ii-V-I in F with turnarounds, 80 bpm swing
+    return [
+      [[43, 46, 50, 47], [58, 62, 65, 69]], // Gm9
+      [[48, 46, 43, 40], [58, 62, 64, 69]], // C13
+      [[41, 45, 48, 49], [57, 60, 64, 67]], // Fmaj9
+      [[50, 48, 45, 44], [54, 60, 64, 69]], // D9
+      [[43, 46, 50, 47], [58, 62, 65, 69]], // Gm9
+      [[48, 46, 43, 40], [58, 62, 64, 69]], // C13
+      [[45, 48, 52, 51], [60, 64, 67, 71]], // Am9
+      [[50, 48, 45, 44], [54, 60, 64, 69]]  // D9
+    ];
+  }
+  hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  initAudio() {
+    if (this.ctx) return true;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      const ctx = new AC();
+      const master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+      const len = Math.floor(ctx.sampleRate * 1.0);
+      const noise = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = noise.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      this.ctx = ctx; this.master = master; this.noise = noise;
+      this.beat = 0; this.nextT = 0;
+      return true;
+    } catch (e) { return false; }
+  }
+  pianoNote(m, t, vel, dur) {
+    const c = this.ctx;
+    const f = this.hz(m);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(2600, t); lp.frequency.exponentialRampToValueAtTime(900, t + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vel, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(vel * 0.3, t + 0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    lp.connect(g); g.connect(this.master);
+    [[1, 1], [2, 0.28], [3, 0.08]].forEach((h) => {
+      const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f * h[0];
+      const hg = c.createGain(); hg.gain.value = h[1];
+      o.connect(hg); hg.connect(lp);
+      o.start(t); o.stop(t + dur + 0.05);
+    });
+  }
+  pianoChord(notes, t, vel, dur) {
+    notes.forEach((m, i) => this.pianoNote(m, t + i * 0.018, vel, dur));
+  }
+  tap(t, vol, dur, freq) {
+    const c = this.ctx;
+    const s = c.createBufferSource(); s.buffer = this.noise;
+    const f = c.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = freq;
+    const g = c.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(this.master);
+    s.start(t); s.stop(t + dur + 0.02);
+  }
+  scheduleBeat(i, t) {
+    const spb = 60 / 80;
+    const sw = spb * 2 / 3;
+    const barIx = Math.floor(i / 4) % 8;
+    const bar = this.bars()[barIx];
+    const b = i % 4;
+    this.tap(t, 0.014, 0.25, 7500);
+    if (b === 1 || b === 3) {
+      this.tap(t + sw, 0.01, 0.18, 7500);
+      this.tap(t, 0.012, 0.05, 9500);
+    }
+    if (b === 0) {
+      this.pianoNote(bar[0][0] + 12, t, 0.05, 2.4);
+      this.pianoChord(bar[1], t + 0.03, 0.028, 2.2);
+    }
+    const v = Math.floor(i / 4) % 2;
+    if (b === 2 && v === 0) this.pianoChord(bar[1], t + sw, 0.018, 1.2);
+    if (b === 1 && v === 1) this.pianoChord(bar[1], t + sw, 0.018, 1.2);
+  }
+  schedule() {
+    const c = this.ctx;
+    if (!c || c.state !== 'running' || !this.musicLive) return;
+    if (this.nextT < c.currentTime) this.nextT = c.currentTime + 0.05;
+    while (this.nextT < c.currentTime + 0.3) {
+      this.scheduleBeat(this.beat, this.nextT);
+      this.beat = (this.beat + 1) % 32;
+      this.nextT += 60 / 80;
+    }
+  }
+  musicStart() {
+    if (!this.state.music || !this.initAudio()) return;
+    const c = this.ctx;
+    try { c.resume(); } catch (e) {}
+    if (!this.musicLive) {
+      this.musicLive = true;
+      this.beat = 0;
+      this.nextT = c.currentTime + 0.1;
+      this.master.gain.cancelScheduledValues(c.currentTime);
+      this.master.gain.setValueAtTime(0.0001, c.currentTime);
+      this.master.gain.exponentialRampToValueAtTime(0.55, c.currentTime + 1.5);
+    }
+  }
+  musicStop(fade) {
+    if (!this.ctx) return;
+    const c = this.ctx;
+    this.musicLive = false;
+    const now = c.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(Math.max(this.master.gain.value, 0.0001), now);
+    this.master.gain.exponentialRampToValueAtTime(0.0001, now + (fade || 0.3));
+  }
+  musicPause() { if (this.ctx) { try { this.ctx.suspend(); } catch (e) {} } }
+  musicResume() { if (this.ctx && this.state.music) { try { this.ctx.resume(); } catch (e) {} } }
+
+  componentDidMount() {
+    this.iv = setInterval(() => this.tick(), 200);
+    this.au = setInterval(() => this.schedule(), 60);
+  }
+  componentWillUnmount() {
+    clearInterval(this.iv); clearInterval(this.au); clearTimeout(this.to);
+    if (this.ctx) { try { this.ctx.close(); } catch (e) {} }
+  }
+  tick() {
+    const s = this.state;
+    if (!s.playing || s.scene < 0) return;
+    const d = this.durs();
+    const el = s.el + 200;
+    if (el >= d[s.scene]) {
+      if (s.scene < d.length - 1) this.setState({ scene: s.scene + 1, el: 0 });
+      else { this.setState({ el: d[s.scene], playing: false, ended: true }); this.musicStop(3); }
+    } else {
+      this.setState({ el: el });
+    }
+  }
+  go(i, off) {
+    off = off || 0;
+    clearTimeout(this.to);
+    this.musicStart();
+    this.musicResume();
+    this.setState({ scene: -1, el: 0 });
+    this.to = setTimeout(() => {
+      this.setState({ scene: i, el: off, started: true, playing: true, ended: false });
+      if (off) setTimeout(() => this.sync(off), 60);
+    }, 40);
+  }
+  sync(off) {
+    try {
+      const st = document.querySelector('.stage');
+      if (!st || !st.getAnimations) return;
+      st.getAnimations({ subtree: true }).forEach((a) => { try { a.currentTime = off; } catch (e) {} });
+    } catch (e) {}
+  }
+  jump(delta) {
+    const d = this.durs();
+    const s = this.state;
+    const cur = s.scene < 0 ? 0 : s.scene;
+    let t = 0;
+    for (let i = 0; i < cur; i++) t += d[i];
+    t += (s.scene < 0 || !s.started) ? 0 : s.el;
+    const total = d.reduce((a, b) => a + b, 0);
+    t = Math.max(0, Math.min(t + delta, total - 500));
+    let i = 0;
+    while (i < d.length - 1 && t >= d[i]) { t -= d[i]; i++; }
+    this.go(i, t);
+  }
+  fmt(ms) {
+    const t = Math.floor(ms / 1000);
+    const m = Math.floor(t / 60);
+    const sec = t % 60;
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+  renderVals() {
+    const s = this.state;
+    const d = this.durs();
+    const total = d.reduce((a, b) => a + b, 0);
+    const cur = s.scene < 0 ? 0 : s.scene;
+    let done = 0;
+    for (let i = 0; i < cur; i++) done += d[i];
+    done += s.scene < 0 ? 0 : s.el;
+    const vis = s.started ? s.scene : -2;
+    const chapters = this.labels().map((label, i) => ({
+      label: label,
+      cls: s.started && i === cur ? 'on' : (s.started && i < cur ? 'done' : ''),
+      go: () => this.go(i)
+    }));
+    return {
+      s0: vis === 0, s1: vis === 1, s2: vis === 2, s3: vis === 3, s4: vis === 4, s5: vis === 5, s6: vis === 6, s7: vis === 7,
+      showCover: !s.started,
+      pauseCls: s.playing ? '' : 'paused',
+      isPlaying: s.playing,
+      notPlaying: !s.playing,
+      playLabel: s.playing ? 'Pause' : (s.ended ? 'Replay' : 'Play'),
+      progressW: (Math.min(1, done / total) * 100).toFixed(2) + '%',
+      timeLabel: this.fmt(done) + ' / ' + this.fmt(total),
+      chapters: chapters,
+      steps: [1, 2, 3, 4, 5, 6, 7].map((n) => ({ n: n, on: s.started && s.scene >= 0 && s.scene === n })),
+      showSubs: s.subsOn && s.started,
+      subs: (() => {
+        const L = s.scene >= 0 ? this.subLines()[s.scene] : [];
+        let act = -1;
+        L.forEach((c, i) => { if (s.el >= c[0]) act = i; });
+        return L.map((c, i) => ({ text: c[1], on: i === act }));
+      })(),
+      subsOn: s.subsOn,
+      subsLabel: s.subsOn ? 'Hide captions' : 'Show captions',
+      subsColor: s.subsOn ? '#8FD16F' : '#A9B8CC',
+      toggleSubs: () => this.setState({ subsOn: !this.state.subsOn }),
+      musicOn: s.music,
+      musicOff: !s.music,
+      musicLabel: s.music ? 'Music on' : 'Music off',
+      toggleMusic: () => {
+        const on = !this.state.music;
+        this.setState({ music: on }, () => {
+          if (!on) this.musicStop(0.6);
+          else if (this.state.playing) this.musicStart();
+        });
+      },
+      togglePlay: () => {
+        if (!this.state.started || this.state.ended) this.go(0);
+        else {
+          const playing = !this.state.playing;
+          if (playing) this.musicResume(); else this.musicPause();
+          this.setState({ playing: playing });
+        }
+      },
+      replay: () => this.go(0),
+      back10: () => this.jump(-10000),
+      fwd10: () => this.jump(10000),
+      prev: () => this.go(Math.max(0, cur - 1)),
+      next: () => this.go(Math.min(d.length - 1, cur + 1))
+    };
+  }
+}
+
+Player.prototype.setState = function (obj, cb) { Object.assign(this.state, obj); this.render(); if (cb) cb(); };
+Player.prototype.render = function () {
+  const v = this.renderVals();
+  const $ = (id) => document.getElementById(id);
+  const s = this.state;
+  const vis = s.started ? s.scene : -2;
+  if (vis !== this._vis) {
+    this._vis = vis;
+    const tpl = $('scene-' + vis);
+    $('sceneHost').innerHTML = tpl ? tpl.innerHTML : '';
+  }
+  $('stage').classList.toggle('paused', !s.playing);
+  $('cover').hidden = !v.showCover;
+  const st = v.steps.find((x) => x.on);
+  const stn = st ? st.n : 0;
+  if (stn !== this._step) { this._step = stn; $('steps').innerHTML = stn ? STEP_HTML.split('{{st.n}}').join(String(stn)) : ''; }
+  const sb = v.showSubs ? v.subs.find((x) => x.on) : null;
+  const key = sb ? s.scene + '|' + sb.text : '';
+  if (key !== this._sub) {
+    this._sub = key;
+    $('subs').innerHTML = '';
+    if (sb) { const d = document.createElement('div'); d.innerHTML = SUB_OPEN + '</div>'; d.firstChild.textContent = sb.text; $('subs').appendChild(d.firstChild); }
+  }
+  $('prog').style.width = v.progressW;
+  $('timeLabel').textContent = v.timeLabel;
+  $('playLabel').textContent = v.playLabel;
+  $('playBtn').setAttribute('aria-label', v.playLabel);
+  $('icoPause').hidden = !v.isPlaying; $('icoPlay').hidden = v.isPlaying;
+  $('musicLabel').textContent = v.musicLabel; $('musicBtn').setAttribute('aria-label', v.musicLabel); $('musicBtn').setAttribute('aria-pressed', String(v.musicOn));
+  $('icoMusicOn').hidden = !v.musicOn; $('icoMusicOff').hidden = v.musicOn;
+  $('subsBtn').setAttribute('aria-label', v.subsLabel); $('subsBtn').setAttribute('aria-pressed', String(v.subsOn)); $('subsIcon').setAttribute('stroke', v.subsColor);
+  const ck = v.chapters.map((c) => c.cls).join(',');
+  if (ck !== this._chips) {
+    this._chips = ck;
+    const host = $('chapters'); host.innerHTML = '';
+    v.chapters.forEach((c, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip ' + c.cls; b.textContent = c.label;
+      b.addEventListener('click', () => this.go(i)); host.appendChild(b);
+    });
+  }
+};
+const P = new Player();
+const call = (k) => () => P.renderVals()[k]();
+document.getElementById('coverPlay').addEventListener('click', call('togglePlay'));
+document.getElementById('playBtn').addEventListener('click', call('togglePlay'));
+document.getElementById('replayBtn').addEventListener('click', call('replay'));
+document.getElementById('prevBtn').addEventListener('click', call('prev'));
+document.getElementById('back10Btn').addEventListener('click', call('back10'));
+document.getElementById('fwd10Btn').addEventListener('click', call('fwd10'));
+document.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); call('back10')(); } else if (e.key === 'ArrowRight') { e.preventDefault(); call('fwd10')(); } else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); call('togglePlay')(); } });
+document.getElementById('nextBtn').addEventListener('click', call('next'));
+document.getElementById('musicBtn').addEventListener('click', call('toggleMusic'));
+document.getElementById('subsBtn').addEventListener('click', call('toggleSubs'));
+P.render();
+P.componentDidMount();
+
+</script>
+
+<style>
+#hx-open{position:fixed;top:12px;right:12px;z-index:1000;height:40px;padding:0 16px;border-radius:20px;border:none;background:#1466F0;color:#fff;font:700 14px Lato,system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+#hx-open:focus-visible,#hx-close:focus-visible{outline:3px solid #FFD27A;outline-offset:2px}
+#hx-modal{position:fixed;inset:0;z-index:1001;background:rgba(5,12,24,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+#hx-modal[hidden]{display:none}
+#hx-box{width:min(900px,100%);max-height:calc(100vh - 32px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:#fff;color:#0B2545;border-radius:18px;padding:20px;font-family:Lato,system-ui,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+#hx-box h2{margin:0;font:700 22px Lexend,Lato,sans-serif}
+#hx-box p{margin:0;font-size:14px;color:#3B4F6B;line-height:1.5}
+.hx-wrap{overflow-x:auto}
+#hx-box table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+#hx-box th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#3B4F6B;padding:8px;border-bottom:2px solid #DCE1E8}
+#hx-box td{padding:10px 8px;border-bottom:1px solid #EEF1F5;vertical-align:top;line-height:1.45}
+#hx-close{align-self:flex-start;height:42px;padding:0 18px;border-radius:21px;border:1px solid #DCE1E8;background:#fff;color:#0B2545;font:700 15px Lato,system-ui,sans-serif;cursor:pointer}
+</style>
+<button type="button" id="hx-open">Numbers cheat sheet</button>
+<div id="hx-modal" hidden role="dialog" aria-modal="true" aria-labelledby="hx-title">
+<div id="hx-box">
+<h2 id="hx-title">Support Performance Dashboard: cheat sheet</h2>
+<p>Your goals (KPIs) are measured every quarter. Formal measurement starts after your first 90 days.</p>
+<div class="hx-wrap"><table><thead><tr><th>Number</th><th>What it means</th><th>Goal</th><th>How to meet it</th></tr></thead><tbody><tr><td><b>Utilization</b></td><td>Hours logged in My Day &divide; available hours. Available = 8 h &times; business days, minus PTO, through yesterday.</td><td>90&ndash;100%</td><td>Log training and planned time at the start of your shift, log every case as you work it, and check your total before you log off.</td></tr><tr><td><b>Cases touched</b></td><td>Distinct cases you posted on (note, link or file) or emailed from. Each case counts once.</td><td>&mdash;</td><td>Clean your queue every day: Express and Critical first, then Standard.</td></tr><tr><td><b>Monthly pace</b></td><td>Cases touched &divide; available days &times; 21.</td><td>~200&ndash;250 / month at full workload</td><td>Post an update on every case you move forward. Pace grows as you learn.</td></tr><tr><td><b>TTS Standard</b></td><td>Portal cases acknowledged within 1 business day (24 h, no weekends or US holidays).</td><td>90&ndash;100%</td><td>List View first thing, sorted by Due Date. Milestone plus a customer-visible note.</td></tr><tr><td><b>TTS Express / Critical</b></td><td>1 hour / 30 minutes. Nonstop for 24/7 customers, otherwise Mon&ndash;Fri 7 a.m.&ndash;7 p.m. ET.</td><td>100%</td><td>Always first. Acknowledge right away, then work the case.</td></tr><tr><td><b>Billable h / % Billable</b></td><td>Hours logged as Billable &divide; logged hours.</td><td>No target</td><td>Just use the Billable category correctly.</td></tr><tr><td><b>New / Closed</b></td><td>Cases with your My Day time that came in, or closed, in the period.</td><td>&mdash;</td><td>Follow up on overdue cases and close what you validated.</td></tr></tbody></table></div>
+<p>Support also helps the company meet its quarterly OKRs. They&rsquo;re explained to you once they&rsquo;re made and approved.</p>
+<p>Questions about your numbers? Ask: Support team, Tier II or Director of Customer Support.</p>
+<button type="button" id="hx-close">Close</button>
+</div></div>
+<script>
+(function(){
+  var m = document.getElementById('hx-modal');
+  document.getElementById('hx-open').addEventListener('click', function(){ m.hidden = false; });
+  document.getElementById('hx-close').addEventListener('click', function(){ m.hidden = true; });
+  m.addEventListener('click', function(e){ if (e.target === m) m.hidden = true; });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !m.hidden) m.hidden = true; });
+})();
+</script>
+
+</body>
+</html>
